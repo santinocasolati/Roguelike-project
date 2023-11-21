@@ -6,8 +6,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    public PlayerInputs playerInputs;
-
     void Start()
     {
         if (instance == null)
@@ -18,22 +16,8 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
 
-    private void Awake()
-    {
-        playerInputs = new PlayerInputs();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-    }
-
-    private void OnEnable()
-    {
-        playerInputs.Enable();
-    }
-
-    private void OnDisable()
-    {
-        playerInputs.Disable();
     }
 }
