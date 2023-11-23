@@ -6,14 +6,22 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(CharacterController), typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] private GameObject bulletPrefab;
+
+    [SerializeField] private Transform barrelTransform;
+    [SerializeField] private Transform bulletParent;
+    [SerializeField] private Transform aimTarget;
+
+    [SerializeField] private Animator animator;
+
+    [SerializeField] private float bulletHitMissDistance = 25f;
+    [SerializeField] private float animationSmoothTime = 0.1f;
+    [SerializeField] private float animationPlayTransition = 0.15f;
     [SerializeField] private float playerSpeed = 2.0f;
     [SerializeField] private float jumpHeight = 1.0f;
     [SerializeField] private float gravityValue = -9.81f;
     [SerializeField] private float rotationSpeed = 10f;
-    [SerializeField] private GameObject bulletPrefab;
-    [SerializeField] private Transform barrelTransform;
-    [SerializeField] private Transform bulletParent;
-    [SerializeField] private float bulletHitMissDistance = 25f;
+    [SerializeField] private float aimDistance = 10f;
 
     private CharacterController controller;
     private Vector3 playerVelocity;
@@ -25,6 +33,14 @@ public class PlayerController : MonoBehaviour
     private InputAction jumpAction;
     private InputAction shootAction;
 
+    private int moveXParamId;
+    private int moveZParamId;
+    private int jumpAnimation;
+    private int recoilAnimation;
+
+    private Vector2 currentAnimationBlend;
+    private Vector2 animationVelocity;
+
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -35,6 +51,11 @@ public class PlayerController : MonoBehaviour
         shootAction = playerInput.actions["Shoot"];
 
         cameraTransform = Camera.main.transform;
+
+        moveXParamId = Animator.StringToHash("MoveX");
+        moveZParamId = Animator.StringToHash("MoveZ");
+        jumpAnimation = Animator.StringToHash("Jump");
+        recoilAnimation = Animator.StringToHash("PistolShootRecoil");
     }
 
     private void OnEnable()
@@ -54,7 +75,7 @@ public class PlayerController : MonoBehaviour
         GameObject bullet = GameObject.Instantiate(bulletPrefab, barrelTransform.position, Quaternion.identity, bulletParent);
         BulletController bulletController = bullet.GetComponent<BulletController>();
 
-        if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, Mathf.Infinity))
+        if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, Mathf.Infinity, 0))
         {
             bulletController.target = hit.point;
             bulletController.hit = true;
@@ -63,10 +84,14 @@ public class PlayerController : MonoBehaviour
             bulletController.target = cameraTransform.position + cameraTransform.forward * bulletHitMissDistance;
             bulletController.hit = false;
         }
+
+        animator.CrossFade(recoilAnimation, animationPlayTransition);
     }
 
     void Update()
     {
+        aimTarget.position = cameraTransform.position + cameraTransform.forward * aimDistance;
+
         groundedPlayer = controller.isGrounded;
         if (groundedPlayer && playerVelocity.y < 0)
         {
@@ -74,14 +99,21 @@ public class PlayerController : MonoBehaviour
         }
 
         Vector2 input = moveAction.ReadValue<Vector2>();
-        Vector3 move = new Vector3(input.x, 0, input.y);
+
+        currentAnimationBlend = Vector2.SmoothDamp(currentAnimationBlend, input, ref animationVelocity, animationSmoothTime);
+
+        Vector3 move = new Vector3(currentAnimationBlend.x, 0, currentAnimationBlend.y);
         move = move.x * cameraTransform.right.normalized + move.z * cameraTransform.forward.normalized;
         move.y = 0f;
         controller.Move(move * Time.deltaTime * playerSpeed);
 
+        animator.SetFloat(moveXParamId, currentAnimationBlend.x);
+        animator.SetFloat(moveZParamId, currentAnimationBlend.y);
+
         if (jumpAction.triggered && groundedPlayer)
         {
             playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
+            animator.CrossFade(jumpAnimation, animationPlayTransition);
         }
 
         playerVelocity.y += gravityValue * Time.deltaTime;

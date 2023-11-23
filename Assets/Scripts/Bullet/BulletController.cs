@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BulletController : MonoBehaviour
 {
-    [SerializeField] private GameObject bulletDecal;
+    //[SerializeField] private GameObject bulletDecal;
 
     private float speed = 50f;
     private float timeToDestroy = 3f;
@@ -29,10 +29,10 @@ public class BulletController : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        ContactPoint contact = other.GetContact(0);
+        //ContactPoint contact = other.GetContact(0);
 
-        GameObject decal = Instantiate(bulletDecal, contact.point + contact.normal * .0001f, Quaternion.LookRotation(contact.normal), transform.parent);
+        //GameObject decal = Instantiate(bulletDecal, contact.point + contact.normal * .0001f, Quaternion.LookRotation(contact.normal), transform.parent);
         Destroy(gameObject);
-        Destroy(decal, timeToDestroy);
+        //Destroy(decal, timeToDestroy);
     }
 }

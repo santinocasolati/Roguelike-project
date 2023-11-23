@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5699554671300284316}
   - component: {fileID: 4097334459670858296}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BulletDecal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
