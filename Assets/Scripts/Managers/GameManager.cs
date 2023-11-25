@@ -1,3 +1,5 @@
+using ooparts.dungen;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +8,10 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    void Start()
+    public Room bossRoom;
+    public Action levelLoaded;
+
+    void Awake()
     {
         if (instance == null)
         {
@@ -19,5 +24,12 @@ public class GameManager : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        levelLoaded += LevelLoadedHandler;
+    }
+
+    void LevelLoadedHandler()
+    {
+        Debug.Log("Loaded");
     }
 }
