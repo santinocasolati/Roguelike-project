@@ -113,9 +113,15 @@ namespace ooparts.dungen
 				}
 			}
 
-			stopwatch.Stop();
+            foreach (Room room in _rooms)
+			{
+				if (GameManager.instance.bossRoom == room) continue;
+                room.gameObject.GetComponent<ProceduralDecoration>().enabled = true;
+            }
+
+            stopwatch.Stop();
 			gameObject.AddComponent<BossRoomCreator>();
-		}
+        }
 
 		private IEnumerator WallCheck()
 		{
