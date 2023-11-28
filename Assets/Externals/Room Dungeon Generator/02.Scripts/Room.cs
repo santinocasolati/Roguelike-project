@@ -68,7 +68,16 @@ namespace ooparts.dungen
 			newTile.name = "Tile " + coordinates.x + ", " + coordinates.z;
 			newTile.transform.parent = _tilesObject.transform;
 			newTile.transform.localPosition = RoomMapManager.TileSize * new Vector3(coordinates.x - Coordinates.x - Size.x * 0.5f + 0.5f, 0f, coordinates.z - Coordinates.z - Size.z * 0.5f + 0.5f);
-			return newTile;
+			
+			Tile roof = Instantiate(tileSelected);
+            roof.Coordinates = coordinates;
+            roof.name = "Roof " + coordinates.x + ", " + coordinates.z;
+            roof.transform.parent = _tilesObject.transform;
+            roof.transform.localPosition = RoomMapManager.TileSize * new Vector3(coordinates.x - Coordinates.x - Size.x * 0.5f + 0.5f, 0f, coordinates.z - Coordinates.z - Size.z * 0.5f + 0.5f);
+			roof.transform.GetChild(0).Rotate(new Vector3(180, 0, 0));
+			roof.transform.position = new Vector3(roof.transform.position.x, 4.1f, roof.transform.position.z);
+
+            return newTile;
 		}
 
 		public Corridor CreateCorridor(Room otherRoom)

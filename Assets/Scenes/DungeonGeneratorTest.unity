@@ -306,7 +306,7 @@ MonoBehaviour:
   MaxRooms: 20
   MinRoomSize: 5
   MaxRoomSize: 10
-  TileSizeFactor: 5
+  TileSizeFactor: 4
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
