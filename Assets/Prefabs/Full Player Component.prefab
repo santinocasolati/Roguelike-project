@@ -251,6 +251,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 6198229158317072568, guid: 1baa3a0dcd3bacc4b81ea03968cc782d,
+        type: 3}
+      propertyPath: m_Weight
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6516632863683408217, guid: 1baa3a0dcd3bacc4b81ea03968cc782d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -306,6 +311,11 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 2758734214713514193}
+    - target: {fileID: 6749669298122889268, guid: 1baa3a0dcd3bacc4b81ea03968cc782d,
+        type: 3}
+      propertyPath: aimDistance
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 6749669298122889268, guid: 1baa3a0dcd3bacc4b81ea03968cc782d,
         type: 3}
       propertyPath: bulletParent
