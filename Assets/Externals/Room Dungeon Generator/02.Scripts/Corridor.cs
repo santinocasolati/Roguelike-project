@@ -10,9 +10,9 @@ namespace ooparts.dungen
 		private GameObject _tilesObject;
 		private GameObject _wallsObject;
 		public Tile TilePrefab;
-		public GameObject WallPrefab;
+        public Wall[] walls;
 
-		public Room[] Rooms = new Room[2];
+        public Room[] Rooms = new Room[2];
 		public List<Triangle> Triangles = new List<Triangle>();
 
 		public float Length;
@@ -160,7 +160,7 @@ namespace ooparts.dungen
 					IntVector2 coordinates = tile.Coordinates + direction.ToIntVector2();
 					if (_map.GetTileType(coordinates) == TileType.Wall)
 					{
-						GameObject newWall = Instantiate(WallPrefab);
+						GameObject newWall = Instantiate(ChooseWall());
 						newWall.name = "Wall (" + coordinates.x + ", " + coordinates.z + ")";
 						newWall.transform.parent = _wallsObject.transform;
 						newWall.transform.localPosition = RoomMapManager.TileSize * _map.CoordinatesToPosition(coordinates) - transform.localPosition;
@@ -171,5 +171,29 @@ namespace ooparts.dungen
 			}
 			yield return null;
 		}
-	}
+
+        private GameObject ChooseWall()
+        {
+            int totalChance = 0;
+
+            foreach (Wall wall in walls)
+            {
+                totalChance += wall.chance;
+            }
+
+            int randomValue = Random.Range(0, totalChance);
+
+            foreach (Wall wall in walls)
+            {
+                if (randomValue < wall.chance)
+                {
+                    return wall.obj;
+                }
+
+                randomValue -= wall.chance;
+            }
+
+            return walls[walls.Length - 1].obj;
+        }
+    }
 }

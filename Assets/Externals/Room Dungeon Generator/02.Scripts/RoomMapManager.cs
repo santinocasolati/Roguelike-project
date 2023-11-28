@@ -27,6 +27,7 @@ namespace ooparts.dungen
 		private void BeginGame()
 		{
 			mapInstance = Instantiate(mapPrefap);
+			GameManager.instance.map = mapInstance;
 			mapInstance.RoomCount = MaxRooms;
 			mapInstance.MapSize = new IntVector2(MapSizeX, MapSizeZ);
 			mapInstance.RoomSize.Min = MinRoomSize;

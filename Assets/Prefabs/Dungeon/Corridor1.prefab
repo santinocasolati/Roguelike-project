@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &164034
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 441878}
+  - component: {fileID: 11402150}
+  m_Layer: 0
+  m_Name: Corridor1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &441878
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164034}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.0065001, y: -7.0014076, z: -27.390003}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &11402150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e16e1daae906db843983f754a88fc715, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TilePrefab: {fileID: 7844947860368085669, guid: e6e66d77cbbf2c742bbd29df0c50bf82,
+    type: 3}
+  walls:
+  - chance: 40
+    obj: {fileID: 8117913003653529500, guid: b0c13e14b951eec4eb59c34f2341f8aa, type: 3}
+  - chance: 30
+    obj: {fileID: 7712541148795751855, guid: 273965fa35c8261428e29ce1cab8380e, type: 3}
+  - chance: 30
+    obj: {fileID: 8285274482529552587, guid: 1854b0f04fc69ef479b53bc2ed52ec53, type: 3}
+  Rooms:
+  - {fileID: 0}
+  - {fileID: 0}
+  Length: 0
+  Coordinates:
+    x: 0
+    z: 0

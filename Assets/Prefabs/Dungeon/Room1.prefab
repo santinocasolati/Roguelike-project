@@ -1,0 +1,179 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &118404
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 456254}
+  - component: {fileID: 11430952}
+  - component: {fileID: 4909572864560298958}
+  m_Layer: 0
+  m_Name: Room1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &456254
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 118404}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &11430952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 118404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b01a893185df2e84c8110883393e1474, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CorridorPrefab: {fileID: 11402150, guid: c75e3459e5b21c84189aac0ada90c068, type: 3}
+  Size:
+    x: 0
+    z: 0
+  Coordinates:
+    x: 0
+    z: 0
+  Num: 0
+  TilePrefab:
+  - {fileID: 7844947860368085669, guid: e6e66d77cbbf2c742bbd29df0c50bf82, type: 3}
+  - {fileID: 8508001404154541862, guid: 4a5b4a0e8860c05478ceab7d0a34db44, type: 3}
+  - {fileID: 7931101903070332821, guid: c4cd338fdd91ca5469fe660ca6187e39, type: 3}
+  - {fileID: 371036947075340164, guid: 1b28a8d8207077248b127aec6ed0339d, type: 3}
+  - {fileID: 8175958244828731078, guid: e566ede645cca0349a285c24853575e4, type: 3}
+  walls:
+  - chance: 40
+    obj: {fileID: 8117913003653529500, guid: b0c13e14b951eec4eb59c34f2341f8aa, type: 3}
+  - chance: 100
+    obj: {fileID: 4525536069613517292, guid: d005a46947a81134ca41871360e56e67, type: 3}
+  - chance: 100
+    obj: {fileID: 2343191029738939023, guid: 956fbd22c8e500e4687547e6319a6a29, type: 3}
+  - chance: 100
+    obj: {fileID: 1655805082077333461, guid: 18ea2186949e74b4ab02263064e89bf1, type: 3}
+  Setting:
+    floor: {fileID: 0}
+    wall: {fileID: 0}
+  PlayerPrefab: {fileID: 6413646790482275684, guid: 5829711ec1565704099c1df48ccd7b4e,
+    type: 3}
+--- !u!114 &4909572864560298958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 118404}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4dd5a8165ad28d479de16f1eb3ff069, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  decorationPrefabs:
+  - prefab: {fileID: 7443869710488010156, guid: 9e09d78c5f80cf143ac4afebc0ef38ee,
+      type: 3}
+    spawnPercentage: 50
+  - prefab: {fileID: 762629022377412083, guid: f98e3c85f4dad97468d66b77ab154688, type: 3}
+    spawnPercentage: 50
+  - prefab: {fileID: 1152542846993837220, guid: 65a049a4875bb864fb1b93205772f12a,
+      type: 3}
+    spawnPercentage: 50
+  - prefab: {fileID: 2882597736629610285, guid: 039cbd6420d5c6e43bb1afbc5b85da69,
+      type: 3}
+    spawnPercentage: 50
+  - prefab: {fileID: 5667659253895392116, guid: 8b4dcb92cbceb634b8792e523ac5a746,
+      type: 3}
+    spawnPercentage: 10
+  - prefab: {fileID: 4842597761467085728, guid: 76ac82228be374447a38105ae516f52f,
+      type: 3}
+    spawnPercentage: 10
+  - prefab: {fileID: 8441292143888202438, guid: b6cddee51e8239e42be854d3029188c5,
+      type: 3}
+    spawnPercentage: 10
+  - prefab: {fileID: 5426583971146164625, guid: 7ec354f4df76a7c478fe5ebd34a82e87,
+      type: 3}
+    spawnPercentage: 40
+  - prefab: {fileID: 5485319805562152044, guid: 83643e6e560edc5409912e6a71deb337,
+      type: 3}
+    spawnPercentage: 40
+  - prefab: {fileID: 8383815087870832620, guid: 510cab56debe1064da6ace3151ad71c0,
+      type: 3}
+    spawnPercentage: 40
+  - prefab: {fileID: 4446727985823273144, guid: c902a0ed9a36cf045ae08cfc82a704ff,
+      type: 3}
+    spawnPercentage: 40
+  - prefab: {fileID: 7350623241352671329, guid: ba7a4afc136182b449f07d66eb347213,
+      type: 3}
+    spawnPercentage: 20
+  - prefab: {fileID: 7037451315436617629, guid: 393d5ca0db2c3e34baf0dc5cbeaea841,
+      type: 3}
+    spawnPercentage: 30
+  - prefab: {fileID: 5071179028544698554, guid: 2f025e0c3ab369b4f8ed693540d9e7df,
+      type: 3}
+    spawnPercentage: 20
+  - prefab: {fileID: 4573720386732615780, guid: b729d4ad9dc02c14f9aa99afff1cc151,
+      type: 3}
+    spawnPercentage: 20
+  - prefab: {fileID: 3232870150881816184, guid: e63bdf6530130d14698d26668d18fde0,
+      type: 3}
+    spawnPercentage: 20
+  - prefab: {fileID: 7769192648992075912, guid: 41f870c54b5ad4e42a936d8573291be9,
+      type: 3}
+    spawnPercentage: 40
+  - prefab: {fileID: 7267841335291655443, guid: 4eb8ecf36b8d3ac4ab21b101c53979df,
+      type: 3}
+    spawnPercentage: 40
+  - prefab: {fileID: 5758038776144099222, guid: aa53c563024b09f4295f4373f0475d9a,
+      type: 3}
+    spawnPercentage: 20
+  - prefab: {fileID: 1845063127018833219, guid: 2393a63b4ec3f7d42bbce44035493042,
+      type: 3}
+    spawnPercentage: 10
+  - prefab: {fileID: 6534016538599316171, guid: 9c6069305ed7d724fbc9e37af9b9f417,
+      type: 3}
+    spawnPercentage: 10
+  - prefab: {fileID: 4733273823505583620, guid: c3c749c0b782d7f4ea8034e9ba7f39c2,
+      type: 3}
+    spawnPercentage: 10
+  - prefab: {fileID: 6246644169993986462, guid: a0b8b87d0dc552c4f929371c89e4bab5,
+      type: 3}
+    spawnPercentage: 10
+  - prefab: {fileID: 1318840173859489271, guid: 3d7d35e2ccde7a948b76a718cbdbe934,
+      type: 3}
+    spawnPercentage: 10
+  - prefab: {fileID: 929979053923500368, guid: 54d5cfa83e8606f49b3bdee43bf56624, type: 3}
+    spawnPercentage: 10
+  - prefab: {fileID: 6799668634809636051, guid: a55b3ed27835f364e94bff16df84748b,
+      type: 3}
+    spawnPercentage: 10
+  - prefab: {fileID: 4012427457689016495, guid: b4e0f50633e5b0c43bb2d99443fad98e,
+      type: 3}
+    spawnPercentage: 10
+  - prefab: {fileID: 2686203875581863025, guid: d8f08560043c7bc428f031c3d9fb8d95,
+      type: 3}
+    spawnPercentage: 10
+  - prefab: {fileID: 7660878647159563549, guid: 68e8450302b11b949b1338ebab8d2fa9,
+      type: 3}
+    spawnPercentage: 10
+  - prefab: {fileID: 7037054670802079409, guid: 099a1ae814885f643973fb15c8dd1b79,
+      type: 3}
+    spawnPercentage: 10
+  - prefab: {fileID: 7569380553279902443, guid: 3ed49a0802eaad14a95c10d36f2fdc6c,
+      type: 3}
+    spawnPercentage: 10

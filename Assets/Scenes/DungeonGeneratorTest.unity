@@ -271,8 +271,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a0cc125f8f37e34da538603e767788e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rooms: []
   bossRoom: {fileID: 0}
+  map: {fileID: 0}
 --- !u!4 &1477873552
 Transform:
   m_ObjectHideFlags: 0

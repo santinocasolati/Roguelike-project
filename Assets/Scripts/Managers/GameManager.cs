@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 
     public Room bossRoom;
     public Action levelLoaded;
+    public Map map;
 
     void Awake()
     {

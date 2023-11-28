@@ -114,7 +114,7 @@ public class ProceduralDecoration : MonoBehaviour
         Vector2 refSize = new Vector2(1f, 1f);
 
         Vector2 calc = size / refSize;
-        numberOfDecorations = (int)Mathf.Floor(calc.x + calc.y);
+        numberOfDecorations = (int)Mathf.Floor(calc.x + calc.y)/5;
 
         return bounds;
     }

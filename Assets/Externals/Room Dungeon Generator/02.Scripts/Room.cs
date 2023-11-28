@@ -17,7 +17,7 @@ namespace ooparts.dungen
 		private GameObject _wallsObject;
 		public Tile[] TilePrefab;
 		private Tile[,] _tiles;
-		public GameObject WallPrefab;
+		public Wall[] walls;
 		public RoomSetting Setting;
 
 		public Dictionary<Room, Corridor> RoomCorridor = new Dictionary<Room, Corridor>();
@@ -39,27 +39,20 @@ namespace ooparts.dungen
 			_tilesObject.transform.localPosition = Vector3.zero;
 
 			_tiles = new Tile[Size.x, Size.z];
-			for (int x = 0; x < Size.x; x++)
+
+            Tile randomItem = TilePrefab.Length > 0 ? TilePrefab[Random.Range(0, TilePrefab.Length)] : null;
+
+            for (int x = 0; x < Size.x; x++)
 			{
 				for (int z = 0; z < Size.z; z++)
 				{
-					bool isCenter;
-					
-					if (Size.x > Size.z)
-					{
-						isCenter = z == Size.z / 2 && x % 2 != 0;
-                    } else
-					{
-                        isCenter = x == Size.x / 2 && z % 2 != 0;
-                    }
-
-                    _tiles[x, z] = CreateTile(new IntVector2((Coordinates.x + x), Coordinates.z + z), isCenter);
+                    _tiles[x, z] = CreateTile(new IntVector2((Coordinates.x + x), Coordinates.z + z), randomItem);
 				}
 			}
 			yield return null;
         }
 
-		private Tile CreateTile(IntVector2 coordinates, bool isCenter)
+		private Tile CreateTile(IntVector2 coordinates, Tile tileSelected)
 		{
 			if (_map.GetTileType(coordinates) == TileType.Empty)
 			{
@@ -70,7 +63,6 @@ namespace ooparts.dungen
 				Debug.LogError("Tile Conflict!");
             }
 
-			Tile tileSelected = isCenter ? TilePrefab[1] : TilePrefab[0];
             Tile newTile = Instantiate(tileSelected);
 			newTile.Coordinates = coordinates;
 			newTile.name = "Tile " + coordinates.x + ", " + coordinates.z;
@@ -143,7 +135,7 @@ namespace ooparts.dungen
 						Debug.LogError("Wall is not on appropriate location!!");
 					}
 
-					GameObject newWall = Instantiate(WallPrefab);
+					GameObject newWall = Instantiate(ChooseWall());
 					newWall.name = "Wall (" + x + ", " + z + ")";
 					newWall.transform.parent = _wallsObject.transform;
 					newWall.transform.localPosition = RoomMapManager.TileSize * new Vector3(x - Coordinates.x - Size.x * 0.5f + 0.5f, 0f, z - Coordinates.z - Size.z * 0.5f + 0.5f);
@@ -154,7 +146,31 @@ namespace ooparts.dungen
 			yield return null;
 		}
 
-		public IEnumerator CreatePlayer()
+        private GameObject ChooseWall()
+        {
+            int totalChance = 0;
+
+            foreach (Wall wall in walls)
+            {
+                totalChance += wall.chance;
+            }
+
+            int randomValue = Random.Range(0, totalChance);
+
+            foreach (Wall wall in walls)
+            {
+                if (randomValue < wall.chance)
+                {
+                    return wall.obj;
+                }
+
+                randomValue -= wall.chance;
+            }
+
+            return walls[walls.Length - 1].obj;
+        }
+
+        public IEnumerator CreatePlayer()
 		{
 			GameObject player = Instantiate((PlayerPrefab));
 			player.name = "Player";
@@ -163,4 +179,11 @@ namespace ooparts.dungen
 			yield return null;
 		}
 	}
+}
+
+[System.Serializable]
+public class Wall
+{
+	[Range(0, 100)]public int chance;
+	public GameObject obj;
 }
