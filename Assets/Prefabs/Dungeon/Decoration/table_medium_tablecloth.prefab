@@ -63,6 +63,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: table_medium_tablecloth
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ea4b9841f82700343ac29c5e13324330,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ea4b9841f82700343ac29c5e13324330,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

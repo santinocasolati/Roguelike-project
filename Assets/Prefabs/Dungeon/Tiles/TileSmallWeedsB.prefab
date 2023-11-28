@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 533538743773491278}
   - component: {fileID: 1549051372946834055}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TileSmallWeedsB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -125,6 +125,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: floor_tile_small_weeds_B
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9a76b85281339d3448392ac3c4e11b58,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 9a76b85281339d3448392ac3c4e11b58,
         type: 3}

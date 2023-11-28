@@ -63,6 +63,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: table_small
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0a46a6b21bd1a764faaf4e6bb468e066,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0a46a6b21bd1a764faaf4e6bb468e066,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 456254}
   - component: {fileID: 11430952}
   - component: {fileID: 4909572864560298958}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Room1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53,6 +53,8 @@ MonoBehaviour:
     x: 0
     z: 0
   Num: 0
+  torchPrefab: {fileID: 3422963039459487956, guid: 61143d097966f954f89d47bcaa724a00,
+    type: 3}
   TilePrefab:
   - {fileID: 7844947860368085669, guid: e6e66d77cbbf2c742bbd29df0c50bf82, type: 3}
   - {fileID: 8508001404154541862, guid: 4a5b4a0e8860c05478ceab7d0a34db44, type: 3}

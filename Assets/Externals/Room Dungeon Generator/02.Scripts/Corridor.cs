@@ -94,6 +94,10 @@ namespace ooparts.dungen
 			newTile.transform.parent = _tilesObject.transform;
 			newTile.transform.localPosition = RoomMapManager.TileSize * new Vector3(coordinates.x - Coordinates.x + 0.5f, 0, coordinates.z - Coordinates.z + 0.5f);
 
+            Renderer rendTile = newTile.GetComponentInChildren<Renderer>();
+            rendTile.material.SetFloat("_Metallic", 0.0f);
+            rendTile.material.SetFloat("_Smoothness", 0.0f);
+
             Tile roof = Instantiate(TilePrefab);
             roof.Coordinates = coordinates;
             roof.name = "Roof " + coordinates.x + ", " + coordinates.z;
@@ -101,6 +105,10 @@ namespace ooparts.dungen
             roof.transform.localPosition = RoomMapManager.TileSize * new Vector3(coordinates.x - Coordinates.x + 0.5f, 0, coordinates.z - Coordinates.z + 0.5f);
             roof.transform.GetChild(0).Rotate(new Vector3(180, 0, 0));
             roof.transform.position = new Vector3(roof.transform.position.x, 4.1f, roof.transform.position.z);
+
+            Renderer rendRoof = roof.GetComponentInChildren<Renderer>();
+            rendRoof.material.SetFloat("_Metallic", 0.0f);
+            rendRoof.material.SetFloat("_Smoothness", 0.0f);
 
             return newTile;
 		}
@@ -175,7 +183,11 @@ namespace ooparts.dungen
 						newWall.transform.localPosition = RoomMapManager.TileSize * _map.CoordinatesToPosition(coordinates) - transform.localPosition;
 						newWall.transform.localRotation = direction.ToRotation();
 						newWall.transform.localScale *= RoomMapManager.TileSize;
-					}
+
+                        Renderer rend = newWall.GetComponentInChildren<Renderer>();
+                        rend.material.SetFloat("_Metallic", 0.0f);
+                        rend.material.SetFloat("_Smoothness", 0.0f);
+                    }
 				}
 			}
 			yield return null;

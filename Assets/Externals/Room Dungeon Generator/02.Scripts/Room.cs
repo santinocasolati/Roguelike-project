@@ -12,6 +12,7 @@ namespace ooparts.dungen
 		public IntVector2 Size;
 		public IntVector2 Coordinates;
 		public int Num;
+		public GameObject torchPrefab;
 
 		private GameObject _tilesObject;
 		private GameObject _wallsObject;
@@ -68,14 +69,22 @@ namespace ooparts.dungen
 			newTile.name = "Tile " + coordinates.x + ", " + coordinates.z;
 			newTile.transform.parent = _tilesObject.transform;
 			newTile.transform.localPosition = RoomMapManager.TileSize * new Vector3(coordinates.x - Coordinates.x - Size.x * 0.5f + 0.5f, 0f, coordinates.z - Coordinates.z - Size.z * 0.5f + 0.5f);
-			
-			Tile roof = Instantiate(tileSelected);
+
+            Renderer rendTile = newTile.GetComponentInChildren<Renderer>();
+            rendTile.material.SetFloat("_Metallic", 0.0f);
+            rendTile.material.SetFloat("_Smoothness", 0.0f);
+
+            Tile roof = Instantiate(tileSelected);
             roof.Coordinates = coordinates;
             roof.name = "Roof " + coordinates.x + ", " + coordinates.z;
             roof.transform.parent = _tilesObject.transform;
             roof.transform.localPosition = RoomMapManager.TileSize * new Vector3(coordinates.x - Coordinates.x - Size.x * 0.5f + 0.5f, 0f, coordinates.z - Coordinates.z - Size.z * 0.5f + 0.5f);
 			roof.transform.GetChild(0).Rotate(new Vector3(180, 0, 0));
 			roof.transform.position = new Vector3(roof.transform.position.x, 4.1f, roof.transform.position.z);
+
+            Renderer rendRoof = roof.GetComponentInChildren<Renderer>();
+            rendRoof.material.SetFloat("_Metallic", 0.0f);
+            rendRoof.material.SetFloat("_Smoothness", 0.0f);
 
             return newTile;
 		}
@@ -144,13 +153,17 @@ namespace ooparts.dungen
 						Debug.LogError("Wall is not on appropriate location!!");
 					}
 
-					GameObject newWall = Instantiate(ChooseWall());
+                    GameObject newWall = Instantiate(ChooseWall());
 					newWall.name = "Wall (" + x + ", " + z + ")";
 					newWall.transform.parent = _wallsObject.transform;
 					newWall.transform.localPosition = RoomMapManager.TileSize * new Vector3(x - Coordinates.x - Size.x * 0.5f + 0.5f, 0f, z - Coordinates.z - Size.z * 0.5f + 0.5f);
 					newWall.transform.localRotation = rotation;
 					newWall.transform.localScale *= RoomMapManager.TileSize;
-				}
+
+					Renderer rend = newWall.GetComponentInChildren<Renderer>();
+                    rend.material.SetFloat("_Metallic", 0.0f);
+                    rend.material.SetFloat("_Smoothness", 0.0f);
+                }
 			}
 			yield return null;
 		}

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 443492}
   - component: {fileID: 11452788}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Map1
   m_TagString: Map
   m_Icon: {fileID: 0}

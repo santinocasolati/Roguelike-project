@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7857132135273996007}
   - component: {fileID: 7931101903070332821}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TileSmallBrokenB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -125,6 +125,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: floor_tile_small_broken_B
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5be6018a815ee594f9063b02999c6186,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5be6018a815ee594f9063b02999c6186,
         type: 3}
