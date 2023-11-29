@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Cinemachine;
 
 [RequireComponent(typeof(CharacterController), typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
@@ -22,6 +23,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float gravityValue = -9.81f;
     [SerializeField] private float rotationSpeed = 10f;
     [SerializeField] private float aimDistance = 10f;
+
+    [SerializeField] private CinemachineImpulseSource impulseSource;
+    public float shakeDuration;
+    public Vector3 shakeImpulse;
 
     private CharacterController controller;
     private Vector3 playerVelocity;
@@ -86,6 +91,14 @@ public class PlayerController : MonoBehaviour
         }
 
         animator.CrossFade(recoilAnimation, animationPlayTransition);
+
+        impulseSource.GenerateImpulse(shakeImpulse);
+        Invoke(nameof(StopShake), shakeDuration);
+    }
+
+    private void StopShake()
+    {
+        impulseSource.GenerateImpulse(Vector2.zero);
     }
 
     void Update()
