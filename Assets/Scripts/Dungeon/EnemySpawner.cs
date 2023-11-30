@@ -18,7 +18,7 @@ public class EnemySpawner : MonoBehaviour
 
     private bool used;
 
-    private void Start()
+    private void OnEnable()
     {
         used = false;
 
@@ -34,8 +34,7 @@ public class EnemySpawner : MonoBehaviour
         if (!used && other.gameObject.name == "Player")
         {
             used = true;
-            Debug.Log(gameObject.name);
-            //GenerateEnemies();
+            GenerateEnemies();
         }
     }
 
@@ -85,7 +84,7 @@ public class EnemySpawner : MonoBehaviour
 
     bool IsPositionOverlapping(Vector3 position)
     {
-        Collider[] colliders = Physics.OverlapSphere(position, 0.1f);
+        Collider[] colliders = Physics.OverlapSphere(position, 1f);
 
         foreach (Collider collider in colliders)
         {

@@ -119,8 +119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e6a881cbcecedd4cad4930e402c7b1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletDecal: {fileID: 5434556447768832546, guid: 740e961561a9be64b8c173f3754deeeb,
-    type: 3}
+  bulletDamage: 1
 --- !u!54 &1398655252957922278
 Rigidbody:
   m_ObjectHideFlags: 0

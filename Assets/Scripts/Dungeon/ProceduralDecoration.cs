@@ -63,7 +63,7 @@ public class ProceduralDecoration : MonoBehaviour
 
     bool IsPositionOverlapping(Vector3 position)
     {
-        Collider[] colliders = Physics.OverlapSphere(position, 0.1f);
+        Collider[] colliders = Physics.OverlapSphere(position, 1f);
 
         foreach (Collider collider in colliders)
         {

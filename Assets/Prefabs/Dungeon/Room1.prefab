@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 456254}
   - component: {fileID: 11430952}
   - component: {fileID: 4909572864560298958}
+  - component: {fileID: 1900592565105432801}
   m_Layer: 9
   m_Name: Room1
   m_TagString: Untagged
@@ -75,6 +76,8 @@ MonoBehaviour:
     wall: {fileID: 0}
   PlayerPrefab: {fileID: 6413646790482275684, guid: 5829711ec1565704099c1df48ccd7b4e,
     type: 3}
+  hasPlayer: 0
+  bossRoom: 0
 --- !u!114 &4909572864560298958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -179,3 +182,21 @@ MonoBehaviour:
   - prefab: {fileID: 7569380553279902443, guid: 3ed49a0802eaad14a95c10d36f2fdc6c,
       type: 3}
     spawnPercentage: 10
+--- !u!114 &1900592565105432801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 118404}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b6712a1efcb1e64b88b89e8a1037cf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minEnemies: 5
+  maxEnemies: 15
+  enemies:
+  - prefab: {fileID: 3692872400176392775, guid: 9c9a7e8a8e94a1e4aba762c3fcb3a5c3,
+      type: 3}
+    spawnPercentage: 100

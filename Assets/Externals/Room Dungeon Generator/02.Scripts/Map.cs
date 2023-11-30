@@ -116,12 +116,20 @@ namespace ooparts.dungen
 
             foreach (Room room in _rooms)
 			{
-				if (GameManager.instance.bossRoom == room) continue;
-                room.gameObject.GetComponent<ProceduralDecoration>().enabled = true;
+				if (!room.bossRoom)
+				{
+                    room.gameObject.GetComponent<ProceduralDecoration>().enabled = true;
+                } else
+				{
+					Destroy(room.gameObject.GetComponent<ProceduralDecoration>());
+				}
 
 				if (!room.hasPlayer && !room.bossRoom)
 				{
-					room.gameObject.AddComponent<EnemySpawner>();
+					room.gameObject.GetComponent<EnemySpawner>().enabled = true;
+				} else
+				{
+					Destroy(room.gameObject.GetComponent<EnemySpawner>());
 				}
             }
 
