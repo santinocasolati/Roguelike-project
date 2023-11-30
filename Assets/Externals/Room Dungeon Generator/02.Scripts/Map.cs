@@ -103,6 +103,7 @@ namespace ooparts.dungen
 					if (!GameManager.instance.bossRoom && room.RoomCorridor.Count == 1 && Random.Range(0.0f, 1.0f) <= 0.25f)
 					{
 						GameManager.instance.bossRoom = room;
+						room.bossRoom = true;
                     }
 
 					yield return room.CreateWalls();
@@ -117,6 +118,11 @@ namespace ooparts.dungen
 			{
 				if (GameManager.instance.bossRoom == room) continue;
                 room.gameObject.GetComponent<ProceduralDecoration>().enabled = true;
+
+				if (!room.hasPlayer && !room.bossRoom)
+				{
+					room.gameObject.AddComponent<EnemySpawner>();
+				}
             }
 
             stopwatch.Stop();

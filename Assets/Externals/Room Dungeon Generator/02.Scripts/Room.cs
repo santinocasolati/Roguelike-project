@@ -27,6 +27,9 @@ namespace ooparts.dungen
 
 		public GameObject PlayerPrefab;
 
+		public bool hasPlayer;
+		public bool bossRoom;
+
 		public void Init(Map map)
 		{
 			_map = map;
@@ -198,6 +201,7 @@ namespace ooparts.dungen
 			player.name = "Player";
 			player.transform.parent = transform.parent;
 			player.transform.localPosition = transform.localPosition;
+			hasPlayer = true;
 			yield return null;
 		}
 	}
