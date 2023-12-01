@@ -13,6 +13,7 @@ public class EnemySpawner : MonoBehaviour
 {
     public int minEnemies = 5;
     public int maxEnemies = 15;
+    public float timeToSpawn = 3f;
 
     public EnemiesData[] enemies;
 
@@ -31,10 +32,10 @@ public class EnemySpawner : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!used && other.gameObject.name == "Player")
+        if (!used && other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
             used = true;
-            GenerateEnemies();
+            Invoke(nameof(GenerateEnemies), timeToSpawn);
         }
     }
 
@@ -84,7 +85,7 @@ public class EnemySpawner : MonoBehaviour
 
     bool IsPositionOverlapping(Vector3 position)
     {
-        Collider[] colliders = Physics.OverlapSphere(position, 1f);
+        Collider[] colliders = Physics.OverlapSphere(position, 0.1f);
 
         foreach (Collider collider in colliders)
         {

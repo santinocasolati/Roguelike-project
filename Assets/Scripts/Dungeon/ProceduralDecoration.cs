@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 using UnityEngine;
 
 [System.Serializable]
@@ -21,6 +22,10 @@ public class ProceduralDecoration : MonoBehaviour
 
     void GenerateDecorations()
     {
+        Transform parent = transform.Find("Tiles");
+
+        if (parent == null) return;
+
         Bounds roomBounds = CalculateRoomBounds();
 
         for (int i = 0; i < numberOfDecorations; i++)
@@ -32,7 +37,11 @@ public class ProceduralDecoration : MonoBehaviour
             decoration.transform.position = new Vector3(decoration.transform.position.x, 0.01f, decoration.transform.position.z);
 
             decoration.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
+
+            decoration.transform.parent = parent;
         }
+
+        GenerateNavMesh();
     }
 
     Vector3 GetRandomPosition(Bounds roomBounds)
@@ -117,5 +126,20 @@ public class ProceduralDecoration : MonoBehaviour
         numberOfDecorations = (int)Mathf.Floor(calc.x + calc.y)/5;
 
         return bounds;
+    }
+
+    void GenerateNavMesh()
+    {
+        Transform tilesObject = transform.Find("Tiles");
+
+        if (tilesObject != null )
+        {
+            NavMeshSurface navMesh = tilesObject.gameObject.GetComponent<NavMeshSurface>();
+
+            if (navMesh != null)
+            {
+                navMesh.BuildNavMesh();
+            }
+        }
     }
 }

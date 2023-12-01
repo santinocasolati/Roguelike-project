@@ -8,6 +8,7 @@ namespace ooparts.dungen
 	public class Corridor : MonoBehaviour
 	{
 		private GameObject _tilesObject;
+		private GameObject _roofObject;
 		private GameObject _wallsObject;
 		public Tile TilePrefab;
         public Wall[] walls;
@@ -33,8 +34,12 @@ namespace ooparts.dungen
 			_tilesObject.transform.parent = transform;
 			_tilesObject.transform.localPosition = Vector3.zero;
 
-			// Seperate Corridor to room
-			MoveStickedCorridor();
+            _roofObject = new GameObject("Roof");
+            _roofObject.transform.parent = transform;
+            _roofObject.transform.localPosition = Vector3.zero;
+
+            // Seperate Corridor to room
+            MoveStickedCorridor();
 
 			_tiles = new List<Tile>();
 			int start = Rooms[0].Coordinates.x + Rooms[0].Size.x / 2;
@@ -101,7 +106,7 @@ namespace ooparts.dungen
             Tile roof = Instantiate(TilePrefab);
             roof.Coordinates = coordinates;
             roof.name = "Roof " + coordinates.x + ", " + coordinates.z;
-            roof.transform.parent = _tilesObject.transform;
+            roof.transform.parent = _roofObject.transform;
             roof.transform.localPosition = RoomMapManager.TileSize * new Vector3(coordinates.x - Coordinates.x + 0.5f, 0, coordinates.z - Coordinates.z + 0.5f);
             roof.transform.GetChild(0).Rotate(new Vector3(180, 0, 0));
             roof.transform.position = new Vector3(roof.transform.position.x, 4.1f, roof.transform.position.z);

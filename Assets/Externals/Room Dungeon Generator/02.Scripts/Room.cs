@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ooparts.dungen;
 using static UnityEditor.Progress;
+using Unity.AI.Navigation;
 
 namespace ooparts.dungen
 {
@@ -15,6 +16,7 @@ namespace ooparts.dungen
 		public GameObject torchPrefab;
 
 		private GameObject _tilesObject;
+		private GameObject _roofObject;
 		private GameObject _wallsObject;
 		public Tile[] TilePrefab;
 		private Tile[,] _tiles;
@@ -42,7 +44,11 @@ namespace ooparts.dungen
 			_tilesObject.transform.parent = transform;
 			_tilesObject.transform.localPosition = Vector3.zero;
 
-			_tiles = new Tile[Size.x, Size.z];
+            _roofObject = new GameObject("Roof");
+            _roofObject.transform.parent = transform;
+            _roofObject.transform.localPosition = Vector3.zero;
+
+            _tiles = new Tile[Size.x, Size.z];
 
             Tile randomItem = TilePrefab.Length > 0 ? TilePrefab[Random.Range(0, TilePrefab.Length)] : null;
 
@@ -54,6 +60,10 @@ namespace ooparts.dungen
 				}
 			}
 			yield return null;
+
+            NavMeshSurface navMesh = _tilesObject.gameObject.AddComponent<NavMeshSurface>();
+			navMesh.useGeometry = UnityEngine.AI.NavMeshCollectGeometry.PhysicsColliders;
+			navMesh.collectObjects = CollectObjects.Children;
         }
 
 		private Tile CreateTile(IntVector2 coordinates, Tile tileSelected)
@@ -80,7 +90,7 @@ namespace ooparts.dungen
             Tile roof = Instantiate(tileSelected);
             roof.Coordinates = coordinates;
             roof.name = "Roof " + coordinates.x + ", " + coordinates.z;
-            roof.transform.parent = _tilesObject.transform;
+            roof.transform.parent = _roofObject.transform;
             roof.transform.localPosition = RoomMapManager.TileSize * new Vector3(coordinates.x - Coordinates.x - Size.x * 0.5f + 0.5f, 0f, coordinates.z - Coordinates.z - Size.z * 0.5f + 0.5f);
 			roof.transform.GetChild(0).Rotate(new Vector3(180, 0, 0));
 			roof.transform.position = new Vector3(roof.transform.position.x, 4.1f, roof.transform.position.z);

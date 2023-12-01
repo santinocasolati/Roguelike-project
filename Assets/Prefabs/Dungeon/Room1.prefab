@@ -196,6 +196,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minEnemies: 5
   maxEnemies: 15
+  timeToSpawn: 3
   enemies:
   - prefab: {fileID: 3692872400176392775, guid: 9c9a7e8a8e94a1e4aba762c3fcb3a5c3,
       type: 3}
