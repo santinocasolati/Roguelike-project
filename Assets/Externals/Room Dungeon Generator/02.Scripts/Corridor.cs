@@ -93,6 +93,7 @@ namespace ooparts.dungen
 			{
 				return null;
 			}
+
 			Tile newTile = Instantiate(TilePrefab);
 			newTile.Coordinates = coordinates;
 			newTile.name = "Tile " + coordinates.x + ", " + coordinates.z;

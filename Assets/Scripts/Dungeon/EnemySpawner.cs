@@ -17,31 +17,14 @@ public class EnemySpawner : MonoBehaviour
 
     public EnemiesData[] enemies;
 
-    private bool used;
-
     private void OnEnable()
     {
-        used = false;
-
-        BoxCollider boxCollider = gameObject.AddComponent<BoxCollider>();
-        boxCollider.isTrigger = true;
-
-        Bounds bounds = CalculateRoomBounds();
-        boxCollider.size = bounds.size;
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (!used && other.gameObject.layer == LayerMask.NameToLayer("Player"))
-        {
-            used = true;
-            Invoke(nameof(GenerateEnemies), timeToSpawn);
-        }
+        Invoke(nameof(GenerateEnemies), timeToSpawn);
     }
 
     void GenerateEnemies()
     {
-        Bounds roomBounds = CalculateRoomBounds();
+        Bounds roomBounds = gameObject.GetComponent<BoxCollider>().bounds;
 
         int enemiesAmount = Random.Range(minEnemies, maxEnemies);
 
@@ -120,18 +103,5 @@ public class EnemySpawner : MonoBehaviour
         }
 
         return enemies[0].prefab;
-    }
-
-    Bounds CalculateRoomBounds()
-    {
-        Collider[] colliders = GetComponentsInChildren<Collider>();
-        Bounds bounds = new Bounds(transform.position, Vector3.zero);
-
-        foreach (Collider collider in colliders)
-        {
-            bounds.Encapsulate(collider.bounds);
-        }
-
-        return bounds;
     }
 }

@@ -9,410 +9,455 @@ using ooparts.dungen;
 
 namespace ooparts.dungen
 {
-	[System.Serializable]
-	public struct MinMax
-	{
-		public int Min;
-		public int Max;
-	}
+    [System.Serializable]
+    public struct MinMax
+    {
+        public int Min;
+        public int Max;
+    }
 
-	public enum TileType
-	{
-		Empty,
-		Room,
-		Corridor,
-		Wall
-	}
+    public enum TileType
+    {
+        Empty,
+        Room,
+        Corridor,
+        Wall
+    }
 
-	public class Map : MonoBehaviour
-	{
-		public Room RoomPrefab;
-		[HideInInspector] public int RoomCount;
-		public RoomSetting[] RoomSettings;
-		[HideInInspector] public IntVector2 MapSize;
-		[HideInInspector] public MinMax RoomSize;
-		public float GenerationStepDelay;
+    public class Map : MonoBehaviour
+    {
+        public Room RoomPrefab;
+        [HideInInspector] public int RoomCount;
+        public RoomSetting[] RoomSettings;
+        [HideInInspector] public IntVector2 MapSize;
+        [HideInInspector] public MinMax RoomSize;
+        public float GenerationStepDelay;
 
-		private List<Room> _rooms;
-		private List<Corridor> _corridors;
+        private List<Room> _rooms;
+        private List<Corridor> _corridors;
 
-		private TileType[,] _tilesTypes;
+        private TileType[,] _tilesTypes;
 
-		private bool _hasPlayer = false;
+        private bool _hasPlayer = false;
 
-		public void SetTileType(IntVector2 coordinates, TileType tileType)
-		{
-			_tilesTypes[coordinates.x, coordinates.z] = tileType;
-		}
+        public void SetTileType(IntVector2 coordinates, TileType tileType)
+        {
+            _tilesTypes[coordinates.x, coordinates.z] = tileType;
+        }
 
-		public TileType GetTileType(IntVector2 coordinates)
-		{
-			return _tilesTypes[coordinates.x, coordinates.z];
-		}
+        public TileType GetTileType(IntVector2 coordinates)
+        {
+            return _tilesTypes[coordinates.x, coordinates.z];
+        }
 
 
-		// Generate Rooms and Corridors
-		public IEnumerator Generate()
-		{
-			Stopwatch stopwatch = new Stopwatch();
-			stopwatch.Start();
+        // Generate Rooms and Corridors
+        public IEnumerator Generate()
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
 
-			{
-				_tilesTypes = new TileType[MapSize.x, MapSize.z];
-				_rooms = new List<Room>();
+            _tilesTypes = new TileType[MapSize.x, MapSize.z];
+            _rooms = new List<Room>();
 
-				// Generate Rooms
-				for (int i = 0; i < RoomCount; i++)
-				{
-					Room roomInstance = CreateRoom();
-					if (roomInstance == null)
-					{
-						RoomCount = _rooms.Count;
-						break;
-					}
+            // Generate Rooms
+            for (int i = 0; i < RoomCount; i++)
+            {
+                Room roomInstance = CreateRoom();
+                if (roomInstance == null)
+                {
+                    RoomCount = _rooms.Count;
+                    break;
+                }
 
-					roomInstance.Setting = RoomSettings[Random.Range(0, RoomSettings.Length)];
-					StartCoroutine(roomInstance.Generate());
+                roomInstance.Setting = RoomSettings[Random.Range(0, RoomSettings.Length)];
+                StartCoroutine(roomInstance.Generate());
 
-					// Generate Player or Monster
-					if (!_hasPlayer)
-					{
-						yield return roomInstance.CreatePlayer();
-						_hasPlayer = true;
-					}
-					yield return null;
-				}
+                if (!_hasPlayer)
+                {
+                    yield return roomInstance.CreatePlayer();
+                    _hasPlayer = true;
+                }
+                yield return null;
+            }
 
-				// Delaunay Triangulation
-				yield return BowyerWatson();
+            // Delaunay Triangulation
+            yield return BowyerWatson();
 
-				// Minimal Spanning Tree
-				yield return PrimMST();
+            // Minimal Spanning Tree
+            yield return PrimMST();
 
-				// Generate Corridors
-				foreach (Corridor corridor in _corridors)
-				{
-					StartCoroutine(corridor.Generate());
-					yield return null;
-				}
+            // Generate Corridors
+            foreach (Corridor corridor in _corridors)
+            {
+                StartCoroutine(corridor.Generate());
+                yield return null;
+            }
 
-				// Generate Walls
-				yield return WallCheck();
-				foreach (Room room in _rooms)
-				{
-					if (!GameManager.instance.bossRoom && room.RoomCorridor.Count == 1 && Random.Range(0.0f, 1.0f) <= 0.25f)
-					{
-						GameManager.instance.bossRoom = room;
-						room.bossRoom = true;
-                    }
+            // Generate Walls
+            yield return WallCheck();
+            foreach (Room room in _rooms)
+            {
+                if (!GameManager.instance.bossRoom && room.RoomCorridor.Count == 1 && Random.Range(0.0f, 1.0f) <= 0.25f)
+                {
+                    GameManager.instance.bossRoom = room;
+                    room.bossRoom = true;
+                }
 
-					yield return room.CreateWalls();
-				}
-				foreach (Corridor corridor in _corridors)
-				{
-					yield return corridor.CreateWalls();
-				}
-			}
+                yield return room.CreateWalls();
+            }
+            foreach (Corridor corridor in _corridors)
+            {
+                yield return corridor.CreateWalls();
+            }
 
             foreach (Room room in _rooms)
-			{
-				if (!room.bossRoom)
-				{
-                    room.gameObject.GetComponent<ProceduralDecoration>().enabled = true;
-                } else
-				{
-					Destroy(room.gameObject.GetComponent<ProceduralDecoration>());
-				}
-
-				if (!room.hasPlayer && !room.bossRoom)
-				{
-					room.gameObject.GetComponent<EnemySpawner>().enabled = true;
-				} else
-				{
-					Destroy(room.gameObject.GetComponent<EnemySpawner>());
-				}
+            {
+                GenerateBoxColliderBasedOnChildren(room);
             }
 
             stopwatch.Stop();
-			gameObject.AddComponent<BossRoomCreator>();
+            gameObject.AddComponent<BossRoomCreator>();
         }
 
-		private IEnumerator WallCheck()
-		{
-			for (int x = 0; x < MapSize.x; x++)
-			{
-				for (int z = 0; z < MapSize.z; z++)
-				{
-					if (_tilesTypes[x, z] == TileType.Empty && IsWall(x, z))
-					{
-						_tilesTypes[x, z] = TileType.Wall;
-					}
-				}
-			}
-			yield return null;
-		}
+        void GenerateBoxColliderBasedOnChildren(Room room)
+        {
+            Renderer[] childRenderers = room.gameObject.GetComponentsInChildren<Renderer>();
 
-		private bool IsWall(int x, int z)
-		{
-			for (int i = x - 1; i <= x + 1; i++)
-			{
-				if (i < 0 || i >= MapSize.x)
-				{
-					continue;
-				}
-				for (int j = z - 1; j <= z + 1; j++)
-				{
-					if (j < 0 || j >= MapSize.z || (i == x && j == z))
-					{
-						continue;
-					}
-					if (_tilesTypes[i, j] == TileType.Room || _tilesTypes[i, j] == TileType.Corridor)
-					{
-						return true;
-					}
-				}
-			}
+            if (childRenderers.Length == 0)
+            {
+                return;
+            }
 
-			return false;
-		}
+            Bounds combinedBounds = CalculateCombinedBounds(childRenderers);
 
-		private Room CreateRoom()
-		{
-			Room newRoom = null;
+            BoxCollider boxCollider = room.gameObject.AddComponent<BoxCollider>();
+            boxCollider.isTrigger = true;
+            boxCollider.size = combinedBounds.size * 0.7f;
 
-			// Try as many as we can.
-			for (int i = 0; i < RoomCount * RoomCount; i++)
-			{
-				IntVector2 size = new IntVector2(Random.Range(RoomSize.Min, RoomSize.Max + 1), Random.Range(RoomSize.Min, RoomSize.Max + 1));
-				IntVector2 coordinates = new IntVector2(Random.Range(1, MapSize.x - size.x), Random.Range(1, MapSize.z - size.z));
-				if (!IsOverlapped(size, coordinates))
-				{
-					newRoom = Instantiate(RoomPrefab);
-					_rooms.Add(newRoom);
-					newRoom.Num = _rooms.Count;
-					newRoom.name = "Room " + newRoom.Num + " (" + coordinates.x + ", " + coordinates.z + ")";
-					newRoom.Size = size;
-					newRoom.Coordinates = coordinates;
-					newRoom.transform.parent = transform;
-					Vector3 position = CoordinatesToPosition(coordinates);
-					position.x += size.x * 0.5f - 0.5f;
-					position.z += size.z * 0.5f - 0.5f;
-					position *= RoomMapManager.TileSize;
-					newRoom.transform.localPosition = position;
-					newRoom.Init(this);
-					break;
-				}
-			}
+            if (!room.bossRoom)
+            {
+                room.gameObject.GetComponent<ProceduralDecoration>().enabled = true;
+            }
+            else
+            {
+                Destroy(room.gameObject.GetComponent<ProceduralDecoration>());
+            }
 
-			if (newRoom == null)
-			{
-				Debug.LogError("Too many rooms in map!! : " + _rooms.Count);
-			}
+            if (!room.hasPlayer)
+            {
+                EnterRoom enterRoom = room.gameObject.GetComponent<EnterRoom>();
+                enterRoom.enabled = true;
 
-			return newRoom;
-		}
+                if (room.bossRoom)
+                {
+                    enterRoom.roomType = RoomType.Boss;
+                }
+                else
+                {
+                    enterRoom.roomType = RoomType.Enemies;
+                }
+            } else
+            {
+                Destroy(room.gameObject.GetComponent<EnterRoom>());
+            }
+        }
 
-		public IntVector2 RandomCoordinates
-		{
-			get { return new IntVector2(Random.Range(0, MapSize.x), Random.Range(0, MapSize.z)); }
-		}
+        Bounds CalculateCombinedBounds(Renderer[] renderers)
+        {
+            Bounds combinedBounds = new Bounds();
 
-		private bool IsOverlapped(IntVector2 size, IntVector2 coordinates)
-		{
-			foreach (Room room in _rooms)
-			{
-				// Give a little space between two rooms
-				if (Mathf.Abs(room.Coordinates.x - coordinates.x + (room.Size.x - size.x) * 0.5f) < (room.Size.x + size.x) * 0.7f &&
-					Mathf.Abs(room.Coordinates.z - coordinates.z + (room.Size.z - size.z) * 0.5f) < (room.Size.z + size.z) * 0.7f)
-				{
-					return true;
-				}
-			}
-			return false;
-		}
+            foreach (Renderer renderer in renderers)
+            {
+                if (combinedBounds.size == Vector3.zero)
+                {
+                    combinedBounds = renderer.bounds;
+                }
+                else
+                {
+                    combinedBounds.Encapsulate(renderer.bounds);
+                }
+            }
 
-		// Big enough to cover the map
-		private Triangle LootTriangle
-		{
-			get
-			{
-				Vector3[] vertexs = new Vector3[]
-				{
-					RoomMapManager.TileSize * new Vector3(MapSize.x * 2, 0, MapSize.z),
-					RoomMapManager.TileSize * new Vector3(-MapSize.x * 2, 0, MapSize.z),
-					RoomMapManager.TileSize * new Vector3(0, 0, -2 * MapSize.z)
-				};
+            return combinedBounds;
+        }
 
-				Room[] tempRooms = new Room[3];
-				for (int i = 0; i < 3; i++)
-				{
-					tempRooms[i] = Instantiate(RoomPrefab);
-					tempRooms[i].transform.localPosition = vertexs[i];
-					tempRooms[i].name = "Loot Room " + i;
-					tempRooms[i].Init(this);
-				}
+        private IEnumerator WallCheck()
+        {
+            for (int x = 0; x < MapSize.x; x++)
+            {
+                for (int z = 0; z < MapSize.z; z++)
+                {
+                    if (_tilesTypes[x, z] == TileType.Empty && IsWall(x, z))
+                    {
+                        _tilesTypes[x, z] = TileType.Wall;
+                    }
+                }
+            }
+            yield return null;
+        }
 
-				return new Triangle(tempRooms[0], tempRooms[1], tempRooms[2]);
-			}
-		}
+        private bool IsWall(int x, int z)
+        {
+            for (int i = x - 1; i <= x + 1; i++)
+            {
+                if (i < 0 || i >= MapSize.x)
+                {
+                    continue;
+                }
+                for (int j = z - 1; j <= z + 1; j++)
+                {
+                    if (j < 0 || j >= MapSize.z || (i == x && j == z))
+                    {
+                        continue;
+                    }
+                    if (_tilesTypes[i, j] == TileType.Room || _tilesTypes[i, j] == TileType.Corridor)
+                    {
+                        return true;
+                    }
+                }
+            }
 
-		private IEnumerator BowyerWatson()
-		{
-			List<Triangle> triangulation = new List<Triangle>();
+            return false;
+        }
 
-			Triangle loot = LootTriangle;
-			triangulation.Add(loot);
+        private Room CreateRoom()
+        {
+            Room newRoom = null;
 
-			foreach (Room room in _rooms)
-			{
-				List<Triangle> badTriangles = new List<Triangle>();
+            // Try as many as we can.
+            for (int i = 0; i < RoomCount * RoomCount; i++)
+            {
+                IntVector2 size = new IntVector2(Random.Range(RoomSize.Min, RoomSize.Max + 1), Random.Range(RoomSize.Min, RoomSize.Max + 1));
+                IntVector2 coordinates = new IntVector2(Random.Range(1, MapSize.x - size.x), Random.Range(1, MapSize.z - size.z));
+                if (!IsOverlapped(size, coordinates))
+                {
+                    newRoom = Instantiate(RoomPrefab);
+                    _rooms.Add(newRoom);
+                    newRoom.Num = _rooms.Count;
+                    newRoom.name = "Room " + newRoom.Num + " (" + coordinates.x + ", " + coordinates.z + ")";
+                    newRoom.Size = size;
+                    newRoom.Coordinates = coordinates;
+                    newRoom.transform.parent = transform;
+                    Vector3 position = CoordinatesToPosition(coordinates);
+                    position.x += size.x * 0.5f - 0.5f;
+                    position.z += size.z * 0.5f - 0.5f;
+                    position *= RoomMapManager.TileSize;
+                    newRoom.transform.localPosition = position;
+                    newRoom.Init(this);
+                    break;
+                }
+            }
 
-				foreach (Triangle triangle in triangulation)
-				{
-					if (triangle.IsContaining(room))
-					{
-						badTriangles.Add(triangle);
-					}
-				}
+            if (newRoom == null)
+            {
+                Debug.LogError("Too many rooms in map!! : " + _rooms.Count);
+            }
 
-				List<Corridor> polygon = new List<Corridor>();
-				foreach (Triangle badTriangle in badTriangles)
-				{
-					foreach (Corridor corridor in badTriangle.Corridors)
-					{
-						if (corridor.Triangles.Count == 1)
-						{
-							polygon.Add(corridor);
-							corridor.Triangles.Remove(badTriangle);
-							continue;
-						}
+            return newRoom;
+        }
 
-						foreach (Triangle triangle in corridor.Triangles)
-						{
-							if (triangle == badTriangle)
-							{
-								continue;
-							}
+        public IntVector2 RandomCoordinates
+        {
+            get { return new IntVector2(Random.Range(0, MapSize.x), Random.Range(0, MapSize.z)); }
+        }
 
-							// Delete Corridor which is between two bad triangles.
-							if (badTriangles.Contains(triangle))
-							{
-								corridor.Rooms[0].RoomCorridor.Remove(corridor.Rooms[1]);
-								corridor.Rooms[1].RoomCorridor.Remove(corridor.Rooms[0]);
-								Destroy(corridor.gameObject);
-							}
-							else
-							{
-								polygon.Add(corridor);
-							}
-							break;
-						}
-					}
-				}
+        private bool IsOverlapped(IntVector2 size, IntVector2 coordinates)
+        {
+            foreach (Room room in _rooms)
+            {
+                // Give a little space between two rooms
+                if (Mathf.Abs(room.Coordinates.x - coordinates.x + (room.Size.x - size.x) * 0.5f) < (room.Size.x + size.x) * 0.7f &&
+                    Mathf.Abs(room.Coordinates.z - coordinates.z + (room.Size.z - size.z) * 0.5f) < (room.Size.z + size.z) * 0.7f)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
-				// Delete Bad Triangles
-				for (int index = badTriangles.Count - 1; index >= 0; --index)
-				{
-					Triangle triangle = badTriangles[index];
-					badTriangles.RemoveAt(index);
-					triangulation.Remove(triangle);
-					foreach (Corridor corridor in triangle.Corridors)
-					{
-						corridor.Triangles.Remove(triangle);
-					}
-				}
+        // Big enough to cover the map
+        private Triangle LootTriangle
+        {
+            get
+            {
+                Vector3[] vertexs = new Vector3[]
+                {
+                    RoomMapManager.TileSize * new Vector3(MapSize.x * 2, 0, MapSize.z),
+                    RoomMapManager.TileSize * new Vector3(-MapSize.x * 2, 0, MapSize.z),
+                    RoomMapManager.TileSize * new Vector3(0, 0, -2 * MapSize.z)
+                };
 
-				foreach (Corridor corridor in polygon)
-				{
-					// TODO: Edge sync
-					Triangle newTriangle = new Triangle(corridor.Rooms[0], corridor.Rooms[1], room);
-					triangulation.Add(newTriangle);
-				}
-			}
-			yield return null;
+                Room[] tempRooms = new Room[3];
+                for (int i = 0; i < 3; i++)
+                {
+                    tempRooms[i] = Instantiate(RoomPrefab);
+                    tempRooms[i].transform.localPosition = vertexs[i];
+                    tempRooms[i].name = "Loot Room " + i;
+                    tempRooms[i].Init(this);
+                }
 
-			for (int index = triangulation.Count - 1; index >= 0; index--)
-			{
-				if (triangulation[index].Rooms.Contains(loot.Rooms[0]) || triangulation[index].Rooms.Contains(loot.Rooms[1]) ||
-					triangulation[index].Rooms.Contains(loot.Rooms[2]))
-				{
-					triangulation.RemoveAt(index);
-				}
-			}
+                return new Triangle(tempRooms[0], tempRooms[1], tempRooms[2]);
+            }
+        }
 
-			foreach (Room room in loot.Rooms)
-			{
-				List<Corridor> deleteList = new List<Corridor>();
-				foreach (KeyValuePair<Room, Corridor> pair in room.RoomCorridor)
-				{
-					deleteList.Add(pair.Value);
-				}
-				for (int index = deleteList.Count - 1; index >= 0; index--)
-				{
-					Corridor corridor = deleteList[index];
-					corridor.Rooms[0].RoomCorridor.Remove(corridor.Rooms[1]);
-					corridor.Rooms[1].RoomCorridor.Remove(corridor.Rooms[0]);
-					Destroy(corridor.gameObject);
-				}
-				Destroy(room.gameObject);
-			}
-		}
+        private IEnumerator BowyerWatson()
+        {
+            List<Triangle> triangulation = new List<Triangle>();
 
-		private IEnumerator PrimMST()
-		{
-			List<Room> connectedRooms = new List<Room>();
-			_corridors = new List<Corridor>();
+            Triangle loot = LootTriangle;
+            triangulation.Add(loot);
 
-			connectedRooms.Add(_rooms[0]);
+            foreach (Room room in _rooms)
+            {
+                List<Triangle> badTriangles = new List<Triangle>();
 
-			while (connectedRooms.Count < _rooms.Count)
-			{
-				KeyValuePair<Room, Corridor> minLength = new KeyValuePair<Room, Corridor>();
-				List<Corridor> deleteList = new List<Corridor>();
+                foreach (Triangle triangle in triangulation)
+                {
+                    if (triangle.IsContaining(room))
+                    {
+                        badTriangles.Add(triangle);
+                    }
+                }
 
-				foreach (Room room in connectedRooms)
-				{
-					foreach (KeyValuePair<Room, Corridor> pair in room.RoomCorridor)
-					{
-						if (connectedRooms.Contains(pair.Key))
-						{
-							continue;
-						}
-						if (minLength.Value == null || minLength.Value.Length > pair.Value.Length)
-						{
-							minLength = pair;
-						}
-					}
-				}
+                List<Corridor> polygon = new List<Corridor>();
+                foreach (Triangle badTriangle in badTriangles)
+                {
+                    foreach (Corridor corridor in badTriangle.Corridors)
+                    {
+                        if (corridor.Triangles.Count == 1)
+                        {
+                            polygon.Add(corridor);
+                            corridor.Triangles.Remove(badTriangle);
+                            continue;
+                        }
 
-				// Check Unnecessary Corridors.
-				foreach (KeyValuePair<Room, Corridor> pair in minLength.Key.RoomCorridor)
-				{
-					if (connectedRooms.Contains(pair.Key) && (minLength.Value != pair.Value))
-					{
-						deleteList.Add(pair.Value);
-					}
-				}
+                        foreach (Triangle triangle in corridor.Triangles)
+                        {
+                            if (triangle == badTriangle)
+                            {
+                                continue;
+                            }
 
-				// Delete corridors
-				for (int index = deleteList.Count - 1; index >= 0; index--)
-				{
-					Corridor corridor = deleteList[index];
-					corridor.Rooms[0].RoomCorridor.Remove(corridor.Rooms[1]);
-					corridor.Rooms[1].RoomCorridor.Remove(corridor.Rooms[0]);
-					deleteList.RemoveAt(index);
-					Destroy(corridor.gameObject);
-				}
+                            // Delete Corridor which is between two bad triangles.
+                            if (badTriangles.Contains(triangle))
+                            {
+                                corridor.Rooms[0].RoomCorridor.Remove(corridor.Rooms[1]);
+                                corridor.Rooms[1].RoomCorridor.Remove(corridor.Rooms[0]);
+                                Destroy(corridor.gameObject);
+                            }
+                            else
+                            {
+                                polygon.Add(corridor);
+                            }
+                            break;
+                        }
+                    }
+                }
 
-				connectedRooms.Add(minLength.Key);
-				_corridors.Add(minLength.Value);
-			}
-			yield return null;
-		}
+                // Delete Bad Triangles
+                for (int index = badTriangles.Count - 1; index >= 0; --index)
+                {
+                    Triangle triangle = badTriangles[index];
+                    badTriangles.RemoveAt(index);
+                    triangulation.Remove(triangle);
+                    foreach (Corridor corridor in triangle.Corridors)
+                    {
+                        corridor.Triangles.Remove(triangle);
+                    }
+                }
 
-		public Vector3 CoordinatesToPosition(IntVector2 coordinates)
-		{
-			return new Vector3(coordinates.x - MapSize.x * 0.5f + 0.5f, 0f, coordinates.z - MapSize.z * 0.5f + 0.5f);
-		}
-	}
+                foreach (Corridor corridor in polygon)
+                {
+                    // TODO: Edge sync
+                    Triangle newTriangle = new Triangle(corridor.Rooms[0], corridor.Rooms[1], room);
+                    triangulation.Add(newTriangle);
+                }
+            }
+            yield return null;
+
+            for (int index = triangulation.Count - 1; index >= 0; index--)
+            {
+                if (triangulation[index].Rooms.Contains(loot.Rooms[0]) || triangulation[index].Rooms.Contains(loot.Rooms[1]) ||
+                    triangulation[index].Rooms.Contains(loot.Rooms[2]))
+                {
+                    triangulation.RemoveAt(index);
+                }
+            }
+
+            foreach (Room room in loot.Rooms)
+            {
+                List<Corridor> deleteList = new List<Corridor>();
+                foreach (KeyValuePair<Room, Corridor> pair in room.RoomCorridor)
+                {
+                    deleteList.Add(pair.Value);
+                }
+                for (int index = deleteList.Count - 1; index >= 0; index--)
+                {
+                    Corridor corridor = deleteList[index];
+                    corridor.Rooms[0].RoomCorridor.Remove(corridor.Rooms[1]);
+                    corridor.Rooms[1].RoomCorridor.Remove(corridor.Rooms[0]);
+                    Destroy(corridor.gameObject);
+                }
+                Destroy(room.gameObject);
+            }
+        }
+
+        private IEnumerator PrimMST()
+        {
+            List<Room> connectedRooms = new List<Room>();
+            _corridors = new List<Corridor>();
+
+            connectedRooms.Add(_rooms[0]);
+
+            while (connectedRooms.Count < _rooms.Count)
+            {
+                KeyValuePair<Room, Corridor> minLength = new KeyValuePair<Room, Corridor>();
+                List<Corridor> deleteList = new List<Corridor>();
+
+                foreach (Room room in connectedRooms)
+                {
+                    foreach (KeyValuePair<Room, Corridor> pair in room.RoomCorridor)
+                    {
+                        if (connectedRooms.Contains(pair.Key))
+                        {
+                            continue;
+                        }
+                        if (minLength.Value == null || minLength.Value.Length > pair.Value.Length)
+                        {
+                            minLength = pair;
+                        }
+                    }
+                }
+
+                // Check Unnecessary Corridors.
+                foreach (KeyValuePair<Room, Corridor> pair in minLength.Key.RoomCorridor)
+                {
+                    if (connectedRooms.Contains(pair.Key) && (minLength.Value != pair.Value))
+                    {
+                        deleteList.Add(pair.Value);
+                    }
+                }
+
+                // Delete corridors
+                for (int index = deleteList.Count - 1; index >= 0; index--)
+                {
+                    Corridor corridor = deleteList[index];
+                    corridor.Rooms[0].RoomCorridor.Remove(corridor.Rooms[1]);
+                    corridor.Rooms[1].RoomCorridor.Remove(corridor.Rooms[0]);
+                    deleteList.RemoveAt(index);
+                    Destroy(corridor.gameObject);
+                }
+
+                connectedRooms.Add(minLength.Key);
+                _corridors.Add(minLength.Value);
+            }
+            yield return null;
+        }
+
+        public Vector3 CoordinatesToPosition(IntVector2 coordinates)
+        {
+            return new Vector3(coordinates.x - MapSize.x * 0.5f + 0.5f, 0f, coordinates.z - MapSize.z * 0.5f + 0.5f);
+        }
+    }
 }

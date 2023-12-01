@@ -111,13 +111,7 @@ public class ProceduralDecoration : MonoBehaviour
 
     Bounds CalculateRoomBounds()
     {
-        Collider[] colliders = GetComponentsInChildren<Collider>();
-        Bounds bounds = new Bounds(transform.position, Vector3.zero);
-
-        foreach (Collider collider in colliders)
-        {
-            bounds.Encapsulate(collider.bounds);
-        }
+        Bounds bounds = gameObject.GetComponent<BoxCollider>().bounds;
 
         Vector2 size = new Vector2(bounds.size.x, bounds.size.z);
         Vector2 refSize = new Vector2(1f, 1f);

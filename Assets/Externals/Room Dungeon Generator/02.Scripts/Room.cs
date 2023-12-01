@@ -18,6 +18,7 @@ namespace ooparts.dungen
 		private GameObject _tilesObject;
 		private GameObject _roofObject;
 		private GameObject _wallsObject;
+		private GameObject _doorsObject;
 		public Tile[] TilePrefab;
 		private Tile[,] _tiles;
 		public Wall[] walls;
@@ -28,6 +29,8 @@ namespace ooparts.dungen
 		private Map _map;
 
 		public GameObject PlayerPrefab;
+
+		public GameObject DoorPrefab;
 
 		public bool hasPlayer;
 		public bool bossRoom;
@@ -131,16 +134,19 @@ namespace ooparts.dungen
 			_wallsObject.transform.parent = transform;
 			_wallsObject.transform.localPosition = Vector3.zero;
 
-			IntVector2 leftBottom = new IntVector2(Coordinates.x - 1, Coordinates.z - 1);
+            _doorsObject = new GameObject("Doors");
+            _doorsObject.transform.parent = transform;
+            _doorsObject.transform.localPosition = Vector3.zero;
+
+            IntVector2 leftBottom = new IntVector2(Coordinates.x - 1, Coordinates.z - 1);
 			IntVector2 rightTop = new IntVector2(Coordinates.x + Size.x, Coordinates.z + Size.z);
 			for (int x = leftBottom.x; x <= rightTop.x; x++)
 			{
 				for (int z = leftBottom.z; z <= rightTop.z; z++)
 				{
-					// If it's center or corner or not wall
-					if ((x != leftBottom.x && x != rightTop.x && z != leftBottom.z && z != rightTop.z) ||
-						((x == leftBottom.x || x == rightTop.x) && (z == leftBottom.z || z == rightTop.z)) ||
-						(_map.GetTileType(new IntVector2(x, z)) != TileType.Wall))
+                    // If it's center or corner or not wall
+                    if ((x != leftBottom.x && x != rightTop.x && z != leftBottom.z && z != rightTop.z) ||
+						((x == leftBottom.x || x == rightTop.x) && (z == leftBottom.z || z == rightTop.z)))
 					{
 						continue;
 					}
@@ -166,16 +172,35 @@ namespace ooparts.dungen
 						Debug.LogError("Wall is not on appropriate location!!");
 					}
 
-                    GameObject newWall = Instantiate(ChooseWall());
+					Transform wallParent;
+					GameObject wallPrefab;
+
+					bool isDoor = false;
+
+					if (_map.GetTileType(new IntVector2(x, z)) != TileType.Wall)
+					{
+						wallParent = _doorsObject.transform;
+						wallPrefab = DoorPrefab;
+						isDoor = true;
+					}
+					else
+					{
+						wallParent = _wallsObject.transform;
+						wallPrefab = ChooseWall();
+                    }
+
+                    GameObject newWall = Instantiate(wallPrefab);
 					newWall.name = "Wall (" + x + ", " + z + ")";
-					newWall.transform.parent = _wallsObject.transform;
-					newWall.transform.localPosition = RoomMapManager.TileSize * new Vector3(x - Coordinates.x - Size.x * 0.5f + 0.5f, 0f, z - Coordinates.z - Size.z * 0.5f + 0.5f);
+                    newWall.transform.parent = wallParent;
+                    newWall.transform.localPosition = RoomMapManager.TileSize * new Vector3(x - Coordinates.x - Size.x * 0.5f + 0.5f, 0f, z - Coordinates.z - Size.z * 0.5f + 0.5f);
 					newWall.transform.localRotation = rotation;
 					newWall.transform.localScale *= RoomMapManager.TileSize;
 
-					Renderer rend = newWall.GetComponentInChildren<Renderer>();
+                    Renderer rend = newWall.GetComponentInChildren<Renderer>();
                     rend.material.SetFloat("_Metallic", 0.0f);
                     rend.material.SetFloat("_Smoothness", 0.0f);
+
+					newWall.SetActive(!isDoor);
                 }
 			}
 			yield return null;
