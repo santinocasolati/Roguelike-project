@@ -20,7 +20,7 @@ public class EnemyHP : MonoBehaviour
     {
         hp -= damage;
 
-        if (hp < 0)
+        if (hp <= 0)
         {
             hp = 0;
             enemyKilled.Invoke();

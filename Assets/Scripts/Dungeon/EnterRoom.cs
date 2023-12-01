@@ -36,11 +36,18 @@ public class EnterRoom : MonoBehaviour
 
         if (roomType == RoomType.Enemies)
         {
-            gameObject.GetComponent<EnemySpawner>().enabled = true;
+            EnemySpawner enemySpawner = gameObject.GetComponent<EnemySpawner>();
+            enemySpawner.enabled = true;
+            enemySpawner.roomCleared += RoomClearedHandler; 
         } else
         {
             Destroy(gameObject.GetComponent<EnemySpawner>());
         }
+    }
+
+    private void RoomClearedHandler()
+    {
+        Invoke(nameof(OpenDoors), 3f);
     }
 
     private void CloseDoors()
@@ -48,6 +55,14 @@ public class EnterRoom : MonoBehaviour
         foreach (Transform door in transform.Find("Doors"))
         {
             door.gameObject.SetActive(true);
+        }
+    }
+
+    private void OpenDoors()
+    {
+        foreach (Transform door in transform.Find("Doors"))
+        {
+            door.gameObject.SetActive(false);
         }
     }
 }

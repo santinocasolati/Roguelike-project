@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,6 +18,10 @@ public class EnemySpawner : MonoBehaviour
 
     public EnemiesData[] enemies;
 
+    private int enemiesAlive;
+
+    public Action roomCleared;
+
     private void OnEnable()
     {
         Invoke(nameof(GenerateEnemies), timeToSpawn);
@@ -26,17 +31,33 @@ public class EnemySpawner : MonoBehaviour
     {
         Bounds roomBounds = gameObject.GetComponent<BoxCollider>().bounds;
 
-        int enemiesAmount = Random.Range(minEnemies, maxEnemies);
+        int enemiesAmount = UnityEngine.Random.Range(minEnemies, maxEnemies);
+        enemiesAlive = enemiesAmount;
 
         for (int i = 0; i < enemiesAmount; i++)
         {
             Vector3 randomPosition = GetRandomPosition(roomBounds);
             GameObject selectedPrefab = ChooseRandomPrefab();
 
-            GameObject decoration = Instantiate(selectedPrefab, randomPosition, Quaternion.identity, transform);
-            decoration.transform.position = new Vector3(decoration.transform.position.x, 0.01f, decoration.transform.position.z);
+            GameObject enemy = Instantiate(selectedPrefab, randomPosition, Quaternion.identity, transform);
+            enemy.transform.SetPositionAndRotation(new Vector3(enemy.transform.position.x, 0.01f, enemy.transform.position.z), Quaternion.Euler(0, UnityEngine.Random.Range(0, 360f), 0));
+            
+            EnemyHP hp = enemy.GetComponent<EnemyHP>();
 
-            decoration.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
+            if (hp != null)
+            {
+                hp.enemyKilled += RoomsEnemiesHandler;
+            }
+        }
+    }
+
+    void RoomsEnemiesHandler()
+    {
+        enemiesAlive--;
+
+        if (enemiesAlive <= 0)
+        {
+            roomCleared.Invoke();
         }
     }
 
@@ -49,9 +70,9 @@ public class EnemySpawner : MonoBehaviour
         while (attempts < maxAttempts)
         {
             randomPosition = new Vector3(
-                Random.Range(roomBounds.min.x, roomBounds.max.x),
-                Random.Range(roomBounds.min.y, roomBounds.max.y),
-                Random.Range(roomBounds.min.z, roomBounds.max.z)
+                UnityEngine.Random.Range(roomBounds.min.x, roomBounds.max.x),
+                UnityEngine.Random.Range(roomBounds.min.y, roomBounds.max.y),
+                UnityEngine.Random.Range(roomBounds.min.z, roomBounds.max.z)
             );
 
             if (!IsPositionOverlapping(randomPosition))
@@ -90,7 +111,7 @@ public class EnemySpawner : MonoBehaviour
             totalPercentage += prefabData.spawnPercentage;
         }
 
-        int randomValue = Random.Range(0, totalPercentage);
+        int randomValue = UnityEngine.Random.Range(0, totalPercentage);
 
         foreach (EnemiesData prefabData in enemies)
         {
