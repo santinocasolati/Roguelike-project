@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using ooparts.dungen;
-using static UnityEditor.Progress;
 using Unity.AI.Navigation;
 
 namespace ooparts.dungen

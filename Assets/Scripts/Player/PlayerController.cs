@@ -37,14 +37,18 @@ public class PlayerController : MonoBehaviour
     private InputAction moveAction;
     private InputAction jumpAction;
     private InputAction shootAction;
+    private InputAction runAction;
 
     private int moveXParamId;
     private int moveZParamId;
+    private int moveMultiplier;
     private int jumpAnimation;
     private int recoilAnimation;
 
     private Vector2 currentAnimationBlend;
     private Vector2 animationVelocity;
+
+    private float running = 1;
 
     private void Awake()
     {
@@ -54,11 +58,13 @@ public class PlayerController : MonoBehaviour
         moveAction = playerInput.actions["Move"];
         jumpAction = playerInput.actions["Jump"];
         shootAction = playerInput.actions["Shoot"];
+        runAction = playerInput.actions["Run"];
 
         cameraTransform = Camera.main.transform;
 
         moveXParamId = Animator.StringToHash("MoveX");
         moveZParamId = Animator.StringToHash("MoveZ");
+        moveMultiplier = Animator.StringToHash("MoveMultiplier");
         jumpAnimation = Animator.StringToHash("Jump");
         recoilAnimation = Animator.StringToHash("PistolShootRecoil");
     }
@@ -111,6 +117,15 @@ public class PlayerController : MonoBehaviour
             playerVelocity.y = 0f;
         }
 
+        if (runAction.IsPressed() && groundedPlayer)
+        {
+            running = 1.5f;
+        } else
+        {
+            running = 1f;
+        }
+        animator.SetFloat(moveMultiplier, running);
+
         Vector2 input = moveAction.ReadValue<Vector2>();
 
         currentAnimationBlend = Vector2.SmoothDamp(currentAnimationBlend, input, ref animationVelocity, animationSmoothTime);
@@ -118,7 +133,7 @@ public class PlayerController : MonoBehaviour
         Vector3 move = new Vector3(currentAnimationBlend.x, 0, currentAnimationBlend.y);
         move = move.x * cameraTransform.right.normalized + move.z * cameraTransform.forward.normalized;
         move.y = 0f;
-        controller.Move(move * Time.deltaTime * playerSpeed);
+        controller.Move(move * running * Time.deltaTime * playerSpeed);
 
         animator.SetFloat(moveXParamId, currentAnimationBlend.x);
         animator.SetFloat(moveZParamId, currentAnimationBlend.y);
