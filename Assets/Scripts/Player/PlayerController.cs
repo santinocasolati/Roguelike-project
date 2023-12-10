@@ -50,6 +50,13 @@ public class PlayerController : MonoBehaviour
 
     private float running = 1;
 
+    public bool canShoot = false;
+    public bool isShooting = false;
+
+    private WeaponType shootType;
+    private float currentDelay;
+    private float weaponDelay;
+
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -71,16 +78,38 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
-        shootAction.performed += _ => ShootGun();
+        shootAction.performed += _ => Shooting(true);
+        shootAction.canceled += _ => Shooting(false);
     }
 
     private void OnDisable()
     {
-        shootAction.performed -= _ => ShootGun();
+        shootAction.performed -= _ => Shooting(true);
+        shootAction.canceled -= _ => Shooting(false);
+    }
+
+    public void ChangeShootType(WeaponType shootType, float shootDelay)
+    {
+        isShooting = false;
+        weaponDelay = shootDelay;
+        this.shootType = shootType;
+        currentDelay = 0;
+    }
+
+    private void Shooting(bool state)
+    {
+        isShooting = state;
+
+        if (!state && shootType == WeaponType.SemiAuto)
+        {
+            currentDelay = weaponDelay;
+        }
     }
 
     private void ShootGun()
     {
+        if (!canShoot) return;
+
         RaycastHit hit;
 
         GameObject bullet = GameObject.Instantiate(bulletPrefab, barrelTransform.position, Quaternion.identity, bulletParent);
@@ -149,5 +178,16 @@ public class PlayerController : MonoBehaviour
 
         Quaternion targetRotation = Quaternion.Euler(0, cameraTransform.eulerAngles.y, 0);
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+        if (isShooting)
+        {
+            if (currentDelay > weaponDelay)
+            {
+                currentDelay = 0;
+                ShootGun();
+            }
+        }
+
+        currentDelay += Time.deltaTime;
     }
 }
