@@ -90,7 +90,6 @@ public class PlayerController : MonoBehaviour
 
     public void ChangeShootType(WeaponType shootType, float shootDelay)
     {
-        isShooting = false;
         weaponDelay = shootDelay;
         this.shootType = shootType;
         currentDelay = 0;
