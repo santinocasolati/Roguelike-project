@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 
     public Room bossRoom;
     public Action levelLoaded;
+    public Action<bool> levelCompleted;
     public Map map;
 
     void Awake()
@@ -27,10 +28,22 @@ public class GameManager : MonoBehaviour
         Cursor.visible = false;
 
         levelLoaded += LevelLoadedHandler;
+        levelCompleted += LevelCompletedHandler;
     }
 
     void LevelLoadedHandler()
     {
         Debug.Log("Loaded");
+    }
+
+    void LevelCompletedHandler(bool win)
+    {
+        if (win)
+        {
+            Debug.Log("Win");
+        } else
+        {
+            Debug.Log("Lose");
+        }
     }
 }

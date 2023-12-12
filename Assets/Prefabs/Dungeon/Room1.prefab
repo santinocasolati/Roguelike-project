@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 456254}
   - component: {fileID: 11430952}
   - component: {fileID: 4909572864560298958}
-  - component: {fileID: 1900592565105432801}
   - component: {fileID: 8959540136306898092}
+  - component: {fileID: 1900592565105432801}
+  - component: {fileID: 420354751760300868}
   m_Layer: 9
   m_Name: Room1
   m_TagString: Untagged
@@ -185,6 +186,18 @@ MonoBehaviour:
   - prefab: {fileID: 7569380553279902443, guid: 3ed49a0802eaad14a95c10d36f2fdc6c,
       type: 3}
     spawnPercentage: 10
+--- !u!114 &8959540136306898092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 118404}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca987238a00b6aa48936b8049dbed4fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1900592565105432801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -204,7 +217,7 @@ MonoBehaviour:
   - prefab: {fileID: 3692872400176392775, guid: 9c9a7e8a8e94a1e4aba762c3fcb3a5c3,
       type: 3}
     spawnPercentage: 100
---- !u!114 &8959540136306898092
+--- !u!114 &420354751760300868
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -213,6 +226,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 118404}
   m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca987238a00b6aa48936b8049dbed4fd, type: 3}
+  m_Script: {fileID: 11500000, guid: e6a58d475c3634d40a21319e1f00af2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  prefab: {fileID: 1820326042169980972, guid: 5901b7ed1d89dc5408b09618e34ed94b, type: 3}
+  timeToSpawn: 3

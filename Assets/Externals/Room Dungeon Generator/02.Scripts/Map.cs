@@ -98,7 +98,7 @@ namespace ooparts.dungen
             yield return WallCheck();
             foreach (Room room in _rooms)
             {
-                if (!GameManager.instance.bossRoom && room.RoomCorridor.Count == 1 && Random.Range(0.0f, 1.0f) <= 0.25f)
+                if (!GameManager.instance.bossRoom && !room.hasPlayer && room.RoomCorridor.Count == 1 && Random.Range(0.0f, 1.0f) <= 0.25f)
                 {
                     GameManager.instance.bossRoom = room;
                     room.bossRoom = true;
@@ -117,7 +117,7 @@ namespace ooparts.dungen
             }
 
             stopwatch.Stop();
-            gameObject.AddComponent<BossRoomCreator>();
+            GameManager.instance.levelLoaded.Invoke();
         }
 
         void GenerateBoxColliderBasedOnChildren(Room room)
@@ -141,6 +141,7 @@ namespace ooparts.dungen
             }
             else
             {
+                Debug.Log(room.gameObject.name);
                 Destroy(room.gameObject.GetComponent<ProceduralDecoration>());
             }
 
@@ -151,11 +152,11 @@ namespace ooparts.dungen
 
                 if (room.bossRoom)
                 {
-                    enterRoom.roomType = RoomType.Boss;
+                    enterRoom.SetRoomType(RoomType.Boss);
                 }
                 else
                 {
-                    enterRoom.roomType = RoomType.Enemies;
+                    enterRoom.SetRoomType(RoomType.Enemies);
                 }
             } else
             {

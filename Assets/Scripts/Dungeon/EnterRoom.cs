@@ -38,10 +38,28 @@ public class EnterRoom : MonoBehaviour
         {
             EnemySpawner enemySpawner = gameObject.GetComponent<EnemySpawner>();
             enemySpawner.enabled = true;
-            enemySpawner.roomCleared += RoomClearedHandler; 
+            enemySpawner.roomCleared += RoomClearedHandler;
         } else
         {
-            Destroy(gameObject.GetComponent<EnemySpawner>());
+            gameObject.GetComponent<BossSpawner>().enabled = true;
+        }
+    }
+
+    public void SetRoomType(RoomType roomType)
+    {
+        this.roomType = roomType;
+
+        switch (roomType)
+        {
+            case RoomType.Enemies:
+                Destroy(gameObject.GetComponent<BossSpawner>());
+                break;
+
+            case RoomType.Boss:
+                Destroy(gameObject.GetComponent<EnemySpawner>());
+                break;
+
+            default: break;
         }
     }
 
