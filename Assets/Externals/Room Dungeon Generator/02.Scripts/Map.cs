@@ -141,7 +141,6 @@ namespace ooparts.dungen
             }
             else
             {
-                Debug.Log(room.gameObject.name);
                 Destroy(room.gameObject.GetComponent<ProceduralDecoration>());
             }
 

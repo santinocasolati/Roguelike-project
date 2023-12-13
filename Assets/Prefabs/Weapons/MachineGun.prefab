@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5924058146437751931}
   - component: {fileID: -8119041782073309179}
+  - component: {fileID: 29800982534677285}
   m_Layer: 0
   m_Name: MachineGun
   m_TagString: Untagged
@@ -50,6 +51,24 @@ MonoBehaviour:
   rightGripPosition: {x: 0.06, y: 0.1481, z: -0.2842}
   rightGripRotation: {x: 0, y: 90, z: 90}
   barrelPosition: {x: 0, y: 0.2408, z: 0.112}
+--- !u!114 &29800982534677285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8776586506215547754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11a7afa6c452c2145ab5fb57bce992a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletPrefab: {fileID: 5990804041043979038, guid: e868426327b01bd43b44a05b214c2c23,
+    type: 3}
+  shootDelay: 0.1
+  switchDelay: 0.25
+  bulletHitMissDistance: 25
+  shakeDuration: 0.1
 --- !u!1001 &2983555825323489652
 PrefabInstance:
   m_ObjectHideFlags: 0

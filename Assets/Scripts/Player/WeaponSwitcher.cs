@@ -22,11 +22,8 @@ public class WeaponSwitcher : MonoBehaviour
     private InputAction weapon1;
     private InputAction weapon2;
 
-    private PlayerController playerController;
-
     void Start()
     {
-        playerController = GetComponent<PlayerController>();
         playerInput = GetComponent<PlayerInput>();
         weapon1 = playerInput.actions["Weapon1"];
         weapon2 = playerInput.actions["Weapon2"];
@@ -39,8 +36,6 @@ public class WeaponSwitcher : MonoBehaviour
 
     void SwitchWeapon(int weaponIndex)
     {
-        playerController.canShoot = false;
-
         if (currentWeapon != null && currentWeapon == weaponPrefabs[weaponIndex]) return;
 
         if (currentModel != null)
@@ -49,8 +44,6 @@ public class WeaponSwitcher : MonoBehaviour
         }
 
         currentWeapon = weaponPrefabs[weaponIndex];
-
-        playerController.ChangeShootType(currentWeapon.type, currentWeapon.shootDelay);
 
         currentModel = Instantiate(currentWeapon.model, container);
         currentModel.transform.GetChild(0).gameObject.SetActive(false);
@@ -78,7 +71,6 @@ public class WeaponSwitcher : MonoBehaviour
         }
 
         currentModel.transform.GetChild(0).gameObject.SetActive(true);
-        playerController.canShoot = true;
     }
 }
 
@@ -86,12 +78,4 @@ public class WeaponSwitcher : MonoBehaviour
 public class Weapon
 {
     public GameObject model;
-    public WeaponType type;
-    public float shootDelay = 0;
-}
-
-public enum WeaponType
-{
-    SemiAuto,
-    FullAuto
 }

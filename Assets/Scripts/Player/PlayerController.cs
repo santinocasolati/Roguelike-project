@@ -7,22 +7,21 @@ using Cinemachine;
 [RequireComponent(typeof(CharacterController), typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private GameObject bulletPrefab;
+    public static PlayerController instance;
 
-    [SerializeField] private Transform barrelTransform;
-    [SerializeField] private Transform bulletParent;
     [SerializeField] private Transform aimTarget;
+    public Transform barrelTransform;
+    public Transform bulletParent;
 
-    [SerializeField] private Animator animator;
+    public Animator animator;
 
-    [SerializeField] private float bulletHitMissDistance = 25f;
+    [SerializeField] private float aimDistance = 10f;
     [SerializeField] private float animationSmoothTime = 0.1f;
     [SerializeField] private float animationPlayTransition = 0.15f;
     [SerializeField] private float playerSpeed = 2.0f;
     [SerializeField] private float jumpHeight = 1.0f;
     [SerializeField] private float gravityValue = -9.81f;
     [SerializeField] private float rotationSpeed = 10f;
-    [SerializeField] private float aimDistance = 10f;
 
     [SerializeField] private CinemachineImpulseSource impulseSource;
     public float shakeDuration;
@@ -31,40 +30,32 @@ public class PlayerController : MonoBehaviour
     private CharacterController controller;
     private Vector3 playerVelocity;
     private bool groundedPlayer;
-    private PlayerInput playerInput;
-    private Transform cameraTransform;
+    public PlayerInput playerInput;
+    public Transform cameraTransform;
 
     private InputAction moveAction;
     private InputAction jumpAction;
-    private InputAction shootAction;
     private InputAction runAction;
 
     private int moveXParamId;
     private int moveZParamId;
     private int moveMultiplier;
     private int jumpAnimation;
-    private int recoilAnimation;
 
     private Vector2 currentAnimationBlend;
     private Vector2 animationVelocity;
 
     private float running = 1;
 
-    public bool canShoot = false;
-    public bool isShooting = false;
-
-    private WeaponType shootType;
-    private float currentDelay;
-    private float weaponDelay;
-
     private void Awake()
     {
+        instance = this;
+
         controller = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
 
         moveAction = playerInput.actions["Move"];
         jumpAction = playerInput.actions["Jump"];
-        shootAction = playerInput.actions["Shoot"];
         runAction = playerInput.actions["Run"];
 
         cameraTransform = Camera.main.transform;
@@ -73,66 +64,17 @@ public class PlayerController : MonoBehaviour
         moveZParamId = Animator.StringToHash("MoveZ");
         moveMultiplier = Animator.StringToHash("MoveMultiplier");
         jumpAnimation = Animator.StringToHash("Jump");
-        recoilAnimation = Animator.StringToHash("PistolShootRecoil");
     }
 
-    private void OnEnable()
+    public void GenerateShake(Vector3 impulse, float stopTime)
     {
-        shootAction.performed += _ => Shooting(true);
-        shootAction.canceled += _ => Shooting(false);
-    }
-
-    private void OnDisable()
-    {
-        shootAction.performed -= _ => Shooting(true);
-        shootAction.canceled -= _ => Shooting(false);
-    }
-
-    public void ChangeShootType(WeaponType shootType, float shootDelay)
-    {
-        weaponDelay = shootDelay;
-        this.shootType = shootType;
-        currentDelay = 0;
-    }
-
-    private void Shooting(bool state)
-    {
-        isShooting = state;
-
-        if (!state && shootType == WeaponType.SemiAuto)
-        {
-            currentDelay = weaponDelay;
-        }
-    }
-
-    private void ShootGun()
-    {
-        if (!canShoot) return;
-
-        RaycastHit hit;
-
-        GameObject bullet = GameObject.Instantiate(bulletPrefab, barrelTransform.position, Quaternion.identity, bulletParent);
-        BulletController bulletController = bullet.GetComponent<BulletController>();
-
-        if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, Mathf.Infinity, 0))
-        {
-            bulletController.target = hit.point;
-            bulletController.hit = true;
-        } else
-        {
-            bulletController.target = cameraTransform.position + cameraTransform.forward * bulletHitMissDistance;
-            bulletController.hit = false;
-        }
-
-        animator.CrossFade(recoilAnimation, animationPlayTransition);
-
-        impulseSource.GenerateImpulse(shakeImpulse);
-        Invoke(nameof(StopShake), shakeDuration);
+        impulseSource.GenerateImpulse(impulse);
+        Invoke(nameof(StopShake), stopTime);
     }
 
     private void StopShake()
     {
-        impulseSource.GenerateImpulse(Vector2.zero);
+        impulseSource.GenerateImpulse(Vector3.zero);
     }
 
     void Update()
@@ -177,16 +119,5 @@ public class PlayerController : MonoBehaviour
 
         Quaternion targetRotation = Quaternion.Euler(0, cameraTransform.eulerAngles.y, 0);
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-
-        if (isShooting)
-        {
-            if (currentDelay > weaponDelay)
-            {
-                currentDelay = 0;
-                ShootGun();
-            }
-        }
-
-        currentDelay += Time.deltaTime;
     }
 }

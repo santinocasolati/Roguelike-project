@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6012636721589707551}
   - component: {fileID: 5370653785600001341}
+  - component: {fileID: 204162432222581912}
   m_Layer: 0
   m_Name: Pistol
   m_TagString: Untagged
@@ -50,7 +51,24 @@ MonoBehaviour:
   rightGripPosition: {x: 0.0599, y: 0.1474, z: -0.1469}
   rightGripRotation: {x: 0, y: 90, z: 90}
   barrelPosition: {x: 0, y: 0.2549, z: 0.1244}
-  barrelRotation: {x: 0, y: 0, z: 0}
+--- !u!114 &204162432222581912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7884344402066474651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0f6ce15a32d73241a506faa3d8871ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletPrefab: {fileID: 5990804041043979038, guid: e868426327b01bd43b44a05b214c2c23,
+    type: 3}
+  shootDelay: 0
+  switchDelay: 0.25
+  bulletHitMissDistance: 25
+  shakeDuration: 0.1
 --- !u!1001 &1874911452119387760
 PrefabInstance:
   m_ObjectHideFlags: 0
